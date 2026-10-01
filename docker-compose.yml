@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: fairshare-db
+    environment:
+      POSTGRES_DB: fairshare
+      POSTGRES_USER: fairshare
+      POSTGRES_PASSWORD: fairshare_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - fairshare-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fairshare -d fairshare"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  fairshare-pgdata:
