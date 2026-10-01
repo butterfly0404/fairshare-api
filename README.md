@@ -106,6 +106,7 @@ docker compose up -d          # starts PostgreSQL 17
 ```
 
 Flyway creates the schema on first start. Health check: http://localhost:8080/actuator/health
+Interactive API docs: http://localhost:8080/swagger-ui.html
 
 ## API
 
