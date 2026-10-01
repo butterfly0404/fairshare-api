@@ -1,8 +1,5 @@
 package com.alishri.fairshare.settlement;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +9,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Stateless settlement endpoint: takes net balances directly rather than
+ * reading them from a stored group. Useful for trying the algorithm without
+ * creating any data, and it is what the README's quick example uses.
+ *
+ * <p>Errors are handled by {@code GlobalExceptionHandler}.
+ */
 @RestController
 @RequestMapping("/api/v1/settlements")
 public class SettlementController {
@@ -19,8 +23,8 @@ public class SettlementController {
     private final DebtSimplifier debtSimplifier;
 
     // Constructor injection — no @Autowired needed on a single constructor.
-    // Preferred over field injection: dependencies are explicit and the class is testable
-    // without a Spring context.
+    // Preferred over field injection: dependencies are explicit and the class is
+    // testable without a Spring context.
     public SettlementController(DebtSimplifier debtSimplifier) {
         this.debtSimplifier = debtSimplifier;
     }
@@ -28,11 +32,5 @@ public class SettlementController {
     @PostMapping("/simplify")
     public List<Transaction> simplify(@RequestBody Map<String, BigDecimal> netBalances) {
         return debtSimplifier.simplify(netBalances);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleBadInput(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", ex.getMessage()));
     }
 }
